@@ -42,6 +42,18 @@ module spi (
     COPI_2 <= COPI;
     current_state <= next_state;
 
+    if (current_state == ADDRESS) begin
+
+        addr[addr_index] <= COPI_2;
+
+    end
+
+    if (current_state == DATA) begin
+
+        data[data_index] <= COPI_2;
+
+    end
+
   end
 
   always @ (negedge SCLK) begin
@@ -83,7 +95,6 @@ module spi (
 
       ADDRESS: begin
 
-        addr[addr_index] = COPI_2;
         if (addr_index > 0) next_state = ADDRESS;    
         else begin
           if (addr <= MAX_ADDR) next_state = DATA; 
@@ -94,7 +105,6 @@ module spi (
 
       DATA: begin
 
-        data[data_index] = COPI_2;
         if (data_index > 0) next_state = DATA;
         else begin
 
