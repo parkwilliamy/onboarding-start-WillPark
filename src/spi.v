@@ -44,13 +44,13 @@ module spi (
 
     if (current_state == ADDRESS) begin
 
-        addr[addr_index] <= COPI_2;
+        addr[addr_index] = COPI_2;
 
     end
 
     if (current_state == DATA) begin
 
-        data[data_index] <= COPI_2;
+        data[data_index] = COPI_2;
 
     end
 
