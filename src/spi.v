@@ -27,8 +27,13 @@ module spi (
 
     current_state <= IDLE;
     next_state <= IDLE;
-    addr_index <= 0;
-    data_index <= 0;
+    addr_index <= 6;
+    data_index <= 7;
+    addr0 <= 0;
+    addr1 <= 0;
+    addr2 <= 0;
+    addr3 <= 0;
+    addr4 <= 0;
 
   end
 
@@ -43,13 +48,13 @@ module spi (
 
     if (current_state == ADDRESS) begin
 
-        addr_index <= addr_index + 1;
+        addr_index <= addr_index - 1;
 
     end
 
     if (current_state == DATA) begin
 
-        data_index <= data_index + 1; //shift data out on -edge
+        data_index <= data_index - 1; //shift data out on -edge
 
     end
 
@@ -69,8 +74,8 @@ module spi (
 
         if (COPI_2) begin
           next_state = ADDRESS;
-          addr_index = 0;
-          data_index = 0;
+          addr_index = 6;
+          data_index = 7;
         end
         else next_state = IDLE; //ignore reads 
 
@@ -79,7 +84,7 @@ module spi (
       ADDRESS: begin
 
         addr[addr_index] = COPI_2;
-        if (addr_index <= 6) next_state = ADDRESS;    
+        if (addr_index > 0) next_state = ADDRESS;    
         else begin
           if (addr <= MAX_ADDR) next_state = DATA; 
           else next_state = IDLE; //reject invalid addresses
@@ -90,22 +95,22 @@ module spi (
       DATA: begin
 
         data[data_index] = COPI_2;
-        if (data_index <= 7) next_state = DATA;
+        if (data_index > 0) next_state = DATA;
         else begin
 
           if (nCS) begin
 
             case (addr)
 
-            0: addr0 = data;
-            1: addr1 = data;
-            2: addr2 = data;
-            3: addr3 = data;
-            4: addr4 = data;
+                0: addr0 = data;
+                1: addr1 = data;
+                2: addr2 = data;
+                3: addr3 = data;
+                4: addr4 = data;
 
             endcase
 
-            next_state = IDLE;
+            current_state = IDLE;
 
           end
 
