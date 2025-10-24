@@ -27,8 +27,8 @@ module spi (
 
     current_state <= IDLE;
     next_state <= IDLE;
-    addr_index <= 6;
-    data_index <= 7;
+    addr_index <= 7;
+    data_index <= 8;
     addr0 <= 0;
     addr1 <= 0;
     addr2 <= 0;
