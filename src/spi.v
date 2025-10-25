@@ -25,9 +25,6 @@ module spi (
 
   always @ (posedge SCLK or posedge nCS) begin
 
-    COPI_2 <= COPI;
-    current_state <= next_state;
-
     if (nCS) begin
 
         case (addr)
@@ -39,6 +36,13 @@ module spi (
             4: addr4 <= data;
 
         endcase
+
+    end
+
+    else begin
+
+        COPI_2 <= COPI;
+        current_state <= next_state;
 
     end
 
@@ -82,7 +86,7 @@ module spi (
 
       IDLE: begin
 
-        if (!nCS) next_state = WRITE;
+        if (!nCS && data_index > 0) next_state = WRITE;
 
       end
 
