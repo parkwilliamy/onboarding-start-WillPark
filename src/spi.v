@@ -56,6 +56,13 @@ module spi (
 
   always @ (negedge SCLK) begin
 
+    if (current_state == WRITE) begin
+
+        addr_index <= 7;
+        data_index <= 7;
+
+    end
+
     if (current_state == ADDRESS && addr_index > 0) begin
 
         addr_index <= addr_index - 1;
@@ -84,8 +91,6 @@ module spi (
 
         if (COPI_2) begin
           next_state = ADDRESS;
-          addr_index = 7;
-          data_index = 7;
         end
         else next_state = IDLE; //ignore reads 
 
