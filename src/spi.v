@@ -23,7 +23,7 @@ module spi (
   // CDC Registers
   reg COPI_2;
 
-  always @ (negedge rst_n) begin
+  always @ (negedge rst_n or posedge nCS) begin
 
     current_state <= IDLE;
     next_state <= IDLE;
@@ -39,7 +39,7 @@ module spi (
 
   end
 
-  always @ (posedge SCLK) begin
+  always @ (posedge SCLK or posedge nCS) begin
 
     COPI_2 <= COPI;
     current_state <= next_state;
@@ -100,6 +100,8 @@ module spi (
         if (data_index > 0) next_state = DATA;
         else begin
 
+          next_state = IDLE;
+
           if (nCS) begin
 
             case (addr)
@@ -111,8 +113,6 @@ module spi (
                 4: addr4 = data;
 
             endcase
-
-            current_state = IDLE;
 
           end
 
