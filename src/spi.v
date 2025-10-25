@@ -28,27 +28,36 @@ module spi (
     if (!rst_n) begin
 
         current_state <= IDLE;
-
-    end
-
-    else if (nCS) begin
-
-        case (addr)
-
-            0: addr0 <= data;
-            1: addr1 <= data;
-            2: addr2 <= data;
-            3: addr3 <= data;
-            4: addr4 <= data;
-
-        endcase
+        addr0 <= 0;
+        addr1 <= 0;
+        addr2 <= 0;
+        addr3 <= 0;
+        addr4 <= 0;
 
     end
 
     else begin
+    
+        if (nCS) begin
 
-        COPI_2 <= COPI;
-        current_state <= next_state;
+            case (addr)
+
+                0: addr0 <= data;
+                1: addr1 <= data;
+                2: addr2 <= data;
+                3: addr3 <= data;
+                4: addr4 <= data;
+
+            endcase
+
+        end
+
+        else begin
+
+            COPI_2 <= COPI;
+            current_state <= next_state;
+
+        end
 
     end
 
