@@ -21,7 +21,7 @@ module spi (
   reg [2:0] data_index;
 
   // CDC Registers
-  reg COPI_2;
+  //reg COPI_2;
 
   always @ (negedge rst_n) begin
 
@@ -39,7 +39,7 @@ module spi (
 
   always @ (posedge SCLK) begin
 
-    COPI_2 <= COPI;
+    //COPI_2 <= COPI;
     current_state <= next_state;
 
   end
@@ -72,7 +72,7 @@ module spi (
 
       WRITE: begin
 
-        if (COPI_2) begin
+        if (COPI) begin
           next_state = ADDRESS;
           addr_index = 6;
           data_index = 7;
@@ -83,7 +83,7 @@ module spi (
 
       ADDRESS: begin
 
-        addr[addr_index] = COPI_2;
+        addr[addr_index] = COPI;
         if (addr_index > 0) next_state = ADDRESS;    
         else begin
           if (addr <= MAX_ADDR) next_state = DATA; 
@@ -94,7 +94,7 @@ module spi (
 
       DATA: begin
 
-        data[data_index] = COPI_2;
+        data[data_index] = COPI;
         if (data_index > 0) next_state = DATA;
         else begin
 
