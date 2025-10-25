@@ -112,7 +112,7 @@ module spi (
 
             endcase
 
-            next_state = IDLE;
+            current_state = IDLE;
 
           end
 
