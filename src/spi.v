@@ -48,13 +48,13 @@ module spi (
 
   always @ (negedge SCLK) begin
 
-    if (current_state == ADDRESS) begin
+    if (current_state == ADDRESS && addr_index > 0) begin
 
         addr_index <= addr_index - 1;
 
     end
 
-    if (current_state == DATA) begin
+    if (current_state == DATA && data_index > 0) begin
 
         data_index <= data_index - 1; //shift data out on -edge
 
