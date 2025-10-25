@@ -27,7 +27,7 @@ module spi (
 
     current_state <= IDLE;
     next_state <= IDLE;
-    addr_index <= 6;
+    addr_index <= 7;
     data_index <= 7;
     addr0 <= 0;
     addr1 <= 0;
@@ -76,7 +76,7 @@ module spi (
 
         if (COPI_2) begin
           next_state = ADDRESS;
-          addr_index = 6;
+          addr_index = 7;
           data_index = 7;
         end
         else next_state = IDLE; //ignore reads 
@@ -85,7 +85,7 @@ module spi (
 
       ADDRESS: begin
 
-        addr[addr_index] = COPI_2;
+        addr[addr_index-1] = COPI_2;
         if (addr_index > 0) next_state = ADDRESS;    
         else begin
           if (addr <= MAX_ADDR) next_state = DATA; 
