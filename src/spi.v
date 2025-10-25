@@ -69,7 +69,7 @@ module spi (
     if (!rst_n) begin
 
         current_state <= IDLE;
-        next_state <= IDLE;
+        next_state = IDLE;
         addr_index <= 7;
         data_index <= 7;
         addr0 <= 0;
@@ -77,8 +77,8 @@ module spi (
         addr2 <= 0;
         addr3 <= 0;
         addr4 <= 0;
-        addr <= 0;
-        data <= 0;
+        addr = 0;
+        data = 0;
 
     end
 
@@ -86,7 +86,7 @@ module spi (
 
       IDLE: begin
 
-        if (!nCS && data_index > 0) next_state = WRITE;
+        if (!nCS) next_state = WRITE;
 
       end
 
@@ -116,7 +116,7 @@ module spi (
 
         data[data_index] = COPI_2;
         if (data_index > 0) next_state = DATA;
-        else next_state <= IDLE;
+        else next_state = IDLE;
 
       end
 
