@@ -68,15 +68,15 @@ module spi (
 
     if (!rst_n) begin
 
-        current_state <= IDLE;
+        current_state = IDLE;
         next_state = IDLE;
-        addr_index <= 7;
-        data_index <= 7;
-        addr0 <= 0;
-        addr1 <= 0;
-        addr2 <= 0;
-        addr3 <= 0;
-        addr4 <= 0;
+        addr_index = 7;
+        data_index = 7;
+        addr0 = 0;
+        addr1 = 0;
+        addr2 = 0;
+        addr3 = 0;
+        addr4 = 0;
         addr = 0;
         data = 0;
 
