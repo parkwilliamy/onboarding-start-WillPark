@@ -22,13 +22,6 @@ module tt_um_uwasic_onboarding_WillPark (
   wire [7:0] en_reg_pwm_15_8;
   wire [7:0] pwm_duty_cycle;
 
-  assign en_reg_out_7_0 = rst_n ? addr0 : 0;
-  assign en_reg_out_15_8 = rst_n ? addr1 : 0;
-  assign en_reg_pwm_7_0 = rst_n ? addr2 : 0;
-  assign en_reg_pwm_15_8 = rst_n ? addr3 : 0;
-  assign pwm_duty_cycle = rst_n ? addr4 : 0;
-
-  reg [7:0] addr0, addr1, addr2, addr3, addr4;
   assign uio_oe = 8'hFF; // Set all IOs to output
 
   // Instantiate the PWM module
@@ -59,11 +52,11 @@ module tt_um_uwasic_onboarding_WillPark (
     .SCLK(SCLK),
     .COPI(COPI_1),
     .nCS(nCS),
-    .addr0(addr0),
-    .addr1(addr1),
-    .addr2(addr2),
-    .addr3(addr3),
-    .addr4(addr4)
+    .data0(en_reg_out_7_0),
+    .data1(en_reg_out_15_8),
+    .data2(en_reg_pwm_7_0),
+    .data3(en_reg_pwm_15_8),
+    .data4(pwm_duty_cycle)
   );
 
   always @ (posedge clk) begin
