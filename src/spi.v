@@ -258,7 +258,7 @@ module spi (
             data[0] = COPI_2;
         end
 
-        next_state = IDLE;
+        next_state = WRITE;
 
       end
 
