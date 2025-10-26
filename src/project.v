@@ -46,6 +46,7 @@ module tt_um_uwasic_onboarding_WillPark (
 
   spi spi_inst (
     .rst_n(rst_n),
+    .clk(clk),
     .SCLK(SCLK),
     .COPI(COPI),
     .nCS(nCS),

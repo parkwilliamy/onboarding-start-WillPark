@@ -6,7 +6,7 @@
 `default_nettype none
 
 module spi (
-    input wire rst_n, SCLK, COPI, nCS,
+    input wire rst_n, clk, SCLK, COPI, nCS,
     output [7:0] data0, data1, data2, data3, data4
 );
 
@@ -43,10 +43,22 @@ module spi (
   assign data3 = inter3;
   assign data4 = inter4;
 
-  // CDC Registers
-  reg COPI_2;
+  //CDC Registers
 
-  always @ (posedge SCLK or negedge rst_n) begin
+  reg SCLK_1, SCLK_2, SCLK_3, COPI_1, COPI_2, nCS_1, nCS_2, nCS_3;
+
+  always @ (posedge clk or negedge rst_n) begin
+
+    SCLK_1 <= SCLK;
+    SCLK_2 <= SCLK_1;
+    SCLK_3 <= SCLK_2;
+
+    COPI_1 <= COPI;
+    COPI_2 <= COPI_1;
+
+    nCS_1 <= nCS;
+    nCS_2 <= nCS_1;
+    nCS_3 <= nCS_2;
 
     if (!rst_n) begin
 
@@ -54,18 +66,16 @@ module spi (
 
     end
 
-    else begin
+    else if (!SCLK_2 && SCLK_3) begin // if SCLK has + edge
     
         COPI_2 <= COPI;
         current_state <= next_state;
 
     end
 
-  end
+    else if (!nCS_2 && nCS_3) begin // if nCS has + edge
 
-  always @ (posedge nCS) begin
-
-    case (addr)
+        case (addr)
 
         0: inter0 <= data;
         1: inter1 <= data;
@@ -73,7 +83,9 @@ module spi (
         3: inter3 <= data;
         4: inter4 <= data;
 
-    endcase
+        endcase
+
+    end
 
   end
 
@@ -83,7 +95,7 @@ module spi (
 
       IDLE: begin
 
-        if (!nCS) next_state = WRITE;
+        if (!nCS_2) next_state = WRITE;
         else next_state = IDLE;
 
       end
@@ -99,7 +111,7 @@ module spi (
 
       ADDRESS1: begin
 
-        if (!nCS) begin
+        if (!nCS_2) begin
             addr[6] = COPI_2;
             next_state = ADDRESS2;
         end
@@ -110,7 +122,7 @@ module spi (
 
       ADDRESS2: begin
 
-        if (!nCS) begin
+        if (!nCS_2) begin
             addr[5] = COPI_2;
             next_state = ADDRESS3;
         end
@@ -121,7 +133,7 @@ module spi (
 
       ADDRESS3: begin
 
-        if (!nCS) begin
+        if (!nCS_2) begin
             addr[4] = COPI_2;
             next_state = ADDRESS4;
         end
@@ -132,7 +144,7 @@ module spi (
 
       ADDRESS4: begin
 
-        if (!nCS) begin
+        if (!nCS_2) begin
             addr[3] = COPI_2;
             next_state = ADDRESS5;
         end
@@ -143,7 +155,7 @@ module spi (
 
       ADDRESS5: begin
 
-        if (!nCS) begin
+        if (!nCS_2) begin
             addr[2] = COPI_2;
             next_state = ADDRESS6;
         end
@@ -154,7 +166,7 @@ module spi (
 
       ADDRESS6: begin
 
-        if (!nCS) begin
+        if (!nCS_2) begin
             addr[1] = COPI_2;
             next_state = ADDRESS7;
         end
@@ -165,7 +177,7 @@ module spi (
 
       ADDRESS7: begin
 
-        if (!nCS) begin
+        if (!nCS_2) begin
             addr[0] = COPI_2;
             if (addr <= MAX_ADDR) next_state = DATA1;
             else next_state = IDLE;
@@ -177,7 +189,7 @@ module spi (
 
       DATA1: begin
 
-        if (!nCS) begin
+        if (!nCS_2) begin
             data[7] = COPI_2;
             next_state = DATA2;
         end
@@ -188,7 +200,7 @@ module spi (
 
       DATA2: begin
 
-        if (!nCS) begin
+        if (!nCS_2) begin
             data[6] = COPI_2;
             next_state = DATA3;
         end
@@ -199,7 +211,7 @@ module spi (
 
       DATA3: begin
 
-        if (!nCS) begin
+        if (!nCS_2) begin
             data[5] = COPI_2;
             next_state = DATA4;
         end
@@ -210,7 +222,7 @@ module spi (
 
       DATA4: begin
 
-        if (!nCS) begin
+        if (!nCS_2) begin
             data[4] = COPI_2;
             next_state = DATA5;
         end
@@ -221,7 +233,7 @@ module spi (
 
       DATA5: begin
 
-        if (!nCS) begin
+        if (!nCS_2) begin
             data[3] = COPI_2;
             next_state = DATA6;
         end
@@ -232,7 +244,7 @@ module spi (
 
       DATA6: begin
 
-        if (!nCS) begin
+        if (!nCS_2) begin
             data[2] = COPI_2;
             next_state = DATA7;
         end
@@ -243,7 +255,7 @@ module spi (
 
       DATA7: begin
 
-        if (!nCS) begin
+        if (!nCS_2) begin
             data[1] = COPI_2;
             next_state = DATA8;
         end
@@ -254,7 +266,7 @@ module spi (
 
       DATA8: begin
 
-        if (!nCS) begin
+        if (!nCS_2) begin
             data[0] = COPI_2;
         end
 
