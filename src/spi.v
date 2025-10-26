@@ -99,8 +99,14 @@ module spi (
 
       IDLE: begin
 
-        if (!nCS_3) next_state = WRITE;
-        else next_state = IDLE;
+        if (!nCS_3) begin
+            next_state = WRITE;
+        end
+        else begin
+            next_state = IDLE;
+            addr = 0;
+            data = 0;
+        end
 
       end
 
