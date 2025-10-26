@@ -70,6 +70,11 @@ module spi (
         current_state <= IDLE;
         addr <= 0;
         data <= 0;
+        inter0 <= 0;
+        inter1 <= 0;
+        inter2 <= 0;
+        inter3 <= 0;
+        inter4 <= 0;
 
     end
 
