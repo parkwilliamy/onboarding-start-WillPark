@@ -44,13 +44,10 @@ module tt_um_uwasic_onboarding_WillPark (
   assign COPI = ui_in[1];
   assign nCS = ui_in[2];
 
-  // CDC Registers
-  reg COPI_1;
-
   spi spi_inst (
     .rst_n(rst_n),
     .SCLK(SCLK),
-    .COPI(COPI_1),
+    .COPI(COPI),
     .nCS(nCS),
     .data0(en_reg_out_7_0),
     .data1(en_reg_out_15_8),
@@ -59,10 +56,5 @@ module tt_um_uwasic_onboarding_WillPark (
     .data4(pwm_duty_cycle)
   );
 
-  always @ (posedge clk) begin
-
-    COPI_1 <= COPI;
-
-  end
 
 endmodule

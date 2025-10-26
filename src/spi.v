@@ -30,43 +30,35 @@ module spi (
   // CDC Registers
   reg COPI_2;
 
-  always @ (posedge SCLK or posedge nCS or negedge rst_n) begin
+  always @ (posedge SCLK or negedge rst_n) begin
 
     if (!rst_n) begin
 
         current_state <= IDLE;
-        inter0 <= 0;
-        inter1 <= 0;
-        inter2 <= 0;
-        inter3 <= 0;
-        inter4 <= 0;
 
     end
 
     else begin
     
-        if (nCS) begin
-
-            case (addr)
-
-                0: inter0 <= data;
-                1: inter1 <= data;
-                2: inter2 <= data;
-                3: inter3 <= data;
-                4: inter4 <= data;
-
-            endcase
-
-        end
-
-        else begin
-
-            COPI_2 <= COPI;
-            current_state <= next_state;
-
-        end
+        COPI_2 <= COPI;
+        current_state <= next_state;
 
     end
+
+  end
+
+  always @ (posedge nCS) begin
+
+    case (addr)
+
+        0: inter0 <= data;
+        1: inter1 <= data;
+        2: inter2 <= data;
+        3: inter3 <= data;
+        4: inter4 <= data;
+
+    endcase
+
 
   end
 
