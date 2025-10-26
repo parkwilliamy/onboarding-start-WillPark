@@ -53,20 +53,16 @@ module spi (
 
   always @ (posedge clk) begin
 
-    if (clk) begin
+    SCLK_1 <= SCLK;
+    SCLK_2 <= SCLK_1;
+    SCLK_3 <= SCLK_2;
 
-        SCLK_1 <= SCLK;
-        SCLK_2 <= SCLK_1;
-        SCLK_3 <= SCLK_2;
+    COPI_1 <= COPI;
+    COPI_2 <= COPI_1;
 
-        COPI_1 <= COPI;
-        COPI_2 <= COPI_1;
-
-        nCS_1 <= nCS;
-        nCS_2 <= nCS_1;
-        nCS_3 <= nCS_2;
-
-    end
+    nCS_1 <= nCS;
+    nCS_2 <= nCS_1;
+    nCS_3 <= nCS_2;
 
     if (!rst_n) begin
 
