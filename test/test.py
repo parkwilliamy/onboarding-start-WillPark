@@ -5,7 +5,7 @@ import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import RisingEdge
 from cocotb.triggers import ClockCycles
-from cocotb.triggers import ValueChange
+#from cocotb.triggers import ValueChange
 from cocotb.types import Logic
 from cocotb.types import LogicArray
 
