@@ -83,7 +83,7 @@ async def send_spi_transaction(dut, r_w, address, data):
     dut.ui_in.value = ui_in_logicarray(ncs, bit, sclk)
     await ClockCycles(dut.clk, 600)
     return ui_in_logicarray(ncs, bit, sclk)
-'''
+
 @cocotb.test()
 async def test_spi(dut):
     dut._log.info("Start SPI test")
@@ -149,8 +149,8 @@ async def test_spi(dut):
     await ClockCycles(dut.clk, 30000)
 
     dut._log.info("SPI test completed successfully")
-'''
 
+'''
 @cocotb.test()
 async def test_pwm_freq(dut):
     # Write your test here
@@ -223,7 +223,7 @@ async def test_pwm_freq(dut):
     await ClockCycles(dut.clk, 1000) 
     
     dut._log.info("PWM Frequency test completed successfully")
-    
+    '''
 
 @cocotb.test()
 async def test_pwm_duty(dut):

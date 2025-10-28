@@ -51,17 +51,6 @@ module spi (
 
   always @ (posedge clk or negedge rst_n) begin
 
-    SCLK_1 <= SCLK;
-    SCLK_2 <= SCLK_1;
-    SCLK_3 <= SCLK_2;
-
-    COPI_1 <= COPI;
-    COPI_2 <= COPI_1;
-
-    nCS_1 <= nCS;
-    nCS_2 <= nCS_1;
-    nCS_3 <= nCS_2;
-
     if (!rst_n) begin
 
         current_state <= IDLE;
@@ -71,26 +60,50 @@ module spi (
         inter3 <= 0;
         inter4 <= 0;
 
-    end
-
-    else if (SCLK_rise) begin // if SCLK has + edge
+        SCLK_1 <= 0;
+        SCLK_2 <= 0;
+        SCLK_3 <= 0;
     
-        COPI_3 <= COPI_2;
-        current_state <= next_state;
+        COPI_1 <= 0;
+        COPI_2 <= 0;
+    
+        nCS_1 <= 0;
+        nCS_2 <= 0;
+        nCS_3 <= 0;
 
-    end
+    end else begin
 
-    else if (nCS_rise) begin // if nCS has + edge
+      SCLK_1 <= SCLK;
+      SCLK_2 <= SCLK_1;
+      SCLK_3 <= SCLK_2;
 
-        case (addr)
+      COPI_1 <= COPI;
+      COPI_2 <= COPI_1;
 
-        0: inter0 <= data;
-        1: inter1 <= data;
-        2: inter2 <= data;
-        3: inter3 <= data;
-        4: inter4 <= data;
+      nCS_1 <= nCS;
+      nCS_2 <= nCS_1;
+      nCS_3 <= nCS_2;
 
-        endcase
+      if (SCLK_rise) begin // if SCLK has + edge
+      
+          COPI_3 <= COPI_2;
+          current_state <= next_state;
+
+      end
+
+      else if (nCS_rise) begin // if nCS has + edge
+
+          case (addr)
+
+          0: inter0 <= data;
+          1: inter1 <= data;
+          2: inter2 <= data;
+          3: inter3 <= data;
+          4: inter4 <= data;
+
+          endcase
+
+      end
 
     end
 
