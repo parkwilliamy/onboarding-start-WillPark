@@ -49,7 +49,7 @@ module spi (
 
   reg SCLK_1, SCLK_2, SCLK_3, COPI_1, COPI_2, COPI_3, nCS_1, nCS_2, nCS_3;
 
-  always @ (posedge clk) begin
+  always @ (posedge clk or negedge rst_n) begin
 
     SCLK_1 <= SCLK;
     SCLK_2 <= SCLK_1;

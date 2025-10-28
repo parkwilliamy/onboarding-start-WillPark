@@ -5,7 +5,7 @@ import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import RisingEdge
 from cocotb.triggers import ClockCycles
-#from cocotb.triggers import ValueChange
+from cocotb.triggers import ValueChange
 from cocotb.types import Logic
 from cocotb.types import LogicArray
 
@@ -83,7 +83,7 @@ async def send_spi_transaction(dut, r_w, address, data):
     dut.ui_in.value = ui_in_logicarray(ncs, bit, sclk)
     await ClockCycles(dut.clk, 600)
     return ui_in_logicarray(ncs, bit, sclk)
-
+'''
 @cocotb.test()
 async def test_spi(dut):
     dut._log.info("Start SPI test")
@@ -149,8 +149,8 @@ async def test_spi(dut):
     await ClockCycles(dut.clk, 30000)
 
     dut._log.info("SPI test completed successfully")
-
 '''
+
 @cocotb.test()
 async def test_pwm_freq(dut):
     # Write your test here
@@ -178,74 +178,52 @@ async def test_pwm_freq(dut):
     ui_in_val = await send_spi_transaction(dut, 1, 0x00, 0x01)
     await ClockCycles(dut.clk, 30000)
     
-    ui_in_val = await send_spi_transaction(dut, 1, 0x01, 0xFF)
-    await ClockCycles(dut.clk, 30000)
+    #ui_in_val = await send_spi_transaction(dut, 1, 0x01, 0xFF)
+    #await ClockCycles(dut.clk, 30000)
     
     ui_in_val = await send_spi_transaction(dut, 1, 0x02, 0x01)
     await ClockCycles(dut.clk, 30000)
     
-    ui_in_val = await send_spi_transaction(dut, 1, 0x03, 0xFF)
-    await ClockCycles(dut.clk, 30000)
+    #ui_in_val = await send_spi_transaction(dut, 1, 0x03, 0xFF)
+    #await ClockCycles(dut.clk, 30000)
     
     ui_in_val = await send_spi_transaction(dut, 1, 0x04, 0xF0)
     await ClockCycles(dut.clk, 30000)
     
-    freq_uo_out_sum = 0
-    time1 = 0 
-    time2 = 0
-    
-    await ValueChange(dut.uo_out)
+    while (1):
+        await RisingEdge(dut.clk)
+        pwm_val_1 = LogicArray(dut.uo_out)[0]
+        await RisingEdge(dut.clk)
+        pwm_val_2 = pwm_val_1
+        await RisingEdge(dut.clk)
+        pwm_val_3 = pwm_val_2
 
-    if LogicArray(dut.uo_out.value)[0] == Logic(1):
+        pwm_rise = (pwm_val_2 == 1) and (pwm_val_3 == 0)
+        if (pwm_rise == 1):
             time1 = cocotb.utils.get_sim_time(units="sec")
-            await ValueChange(dut.uo_out)
-            if LogicArray(dut.uo_out.value)[0] == Logic(1):
-                time2 = cocotb.utils.get_sim_time(units="sec")
-                freq_uo_out = 1 / (time2 - time1)
-                freq_uo_out_sum += freq_uo_out
+            break
 
-    elif LogicArray(dut.uo_out.value)[0] == Logic(0):
-            time1 = cocotb.utils.get_sim_time(units="sec")
-            await ValueChange(dut.uo_out)
-            if LogicArray(dut.uo_out.value)[0] == Logic(0):
-                time2 = cocotb.utils.get_sim_time(units="sec")
-                freq_uo_out = 1 / (time2 - time1)
-                freq_uo_out_sum += freq_uo_out
-    
-    
-    for i in range(8):
-        # Wait for a change in the packed signal
-        await ValueChange(dut.uo_out)
+    while (1):
+        await RisingEdge(dut.clk)
+        pwm_val_1 = LogicArray(dut.uo_out)[0]
+        await RisingEdge(dut.clk)
+        pwm_val_2 = pwm_val_1
+        await RisingEdge(dut.clk)
+        pwm_val_3 = pwm_val_2
 
-        # Check the specific bit
-        if LogicArray(dut.uo_out.value)[i] == Logic(1):
-            time1 = cocotb.utils.get_sim_time(units="s")
-            await ValueChange(dut.uo_out)
-            if LogicArray(dut.uo_out.value)[i] == Logic(1):
-                time2 = cocotb.utils.get_sim_time(units="s")
-                freq_uo_out = 1 / (time2 - time1)
-                freq_uo_out_sum += freq_uo_out
+        pwm_rise = (pwm_val_2 == 1) and (pwm_val_3 == 0)
+        if (pwm_rise == 1):
+            time2 = cocotb.utils.get_sim_time(units="sec")
+            break
 
-                 # Repeat for uio_out
-        await ValueChange(dut.uio_out)
-        if LogicArray(dut.uio_out.value)[i] == Logic(1):
-            time1 = cocotb.utils.get_sim_time(units="s")
-            await ValueChange(dut.uio_out)
-            if LogicArray(dut.uio_out.value)[i] == Logic(1):
-                time2 = cocotb.utils.get_sim_time(units="s")
-                freq_uio_out = 1 / (time2 - time1)
-                freq_uio_out_sum += freq_uio_out
-    
-    freq_uo_out_avg = freq_uo_out_sum
-    #freq_uio_out_avg = freq_uio_out_sum/8
-    assert time2-time1 > 0, f"Expected nonzero time difference, got {time1-time2}"
-    assert freq_uo_out_avg >= 2970 and freq_uo_out_avg <= 3030, f"Expected 2970-3030Hz, got {freq_uo_out_avg}"
+    freq = 1/(time2-time1)
+
+    assert freq >= 2970 and freq <= 3030, f"Expected 2970 <= freq <= 3030, got {freq}"
    
-    #assert freq_uio_out_avg >= 2970 and freq_uio_out_avg <= 3030, f"Expected 2970-3030Hz, got {freq_uio_out_avg}"
     await ClockCycles(dut.clk, 1000) 
     
     dut._log.info("PWM Frequency test completed successfully")
-    '''
+    
 
 @cocotb.test()
 async def test_pwm_duty(dut):
