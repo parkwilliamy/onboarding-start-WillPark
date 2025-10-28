@@ -35,17 +35,14 @@ module spi (
   reg [7:0] data;
   reg [7:0] inter0, inter1, inter2, inter3, inter4;
 
-  reg transaction_finished;
-
   assign data0 = inter0;
   assign data1 = inter1;
   assign data2 = inter2;
   assign data3 = inter3;
   assign data4 = inter4;
 
-  wire SCLK_rise, SCLK_fall, nCS_rise;
+  wire SCLK_rise, nCS_rise;
   assign SCLK_rise = SCLK_2 && !SCLK_3;
-  assign SCLK_fall = !SCLK_2 && SCLK_3;
   assign nCS_rise = nCS_2 && !nCS_3;
 
   //CDC Registers
@@ -68,8 +65,6 @@ module spi (
     if (!rst_n) begin
 
         current_state <= IDLE;
-        addr <= 0;
-        data <= 0;
         inter0 <= 0;
         inter1 <= 0;
         inter2 <= 0;
@@ -111,6 +106,8 @@ module spi (
             next_state = WRITE;
         end
         else begin
+            addr = 0;
+            data = 0;
             next_state = IDLE;
         end
 
