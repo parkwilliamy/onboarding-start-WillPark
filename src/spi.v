@@ -42,51 +42,39 @@ module spi (
   assign data4 = inter4;
 
   wire SCLK_rise, nCS_rise;
-  assign SCLK_rise = SCLK_2 && !SCLK_3;
-  assign nCS_rise = nCS_2 && !nCS_3;
+  assign SCLK_rise = SCLK_shift[1] && !SCLK_shift[2];
+  assign nCS_rise = nCS_shift[1] && !nCS_shift[2];
 
   //CDC Registers
 
-  reg SCLK_1, SCLK_2, SCLK_3, COPI_1, COPI_2, COPI_3, nCS_1, nCS_2, nCS_3;
+  reg [2:0] SCLK_shift, nCS_shift, COPI_shift;
 
   always @ (posedge clk or negedge rst_n) begin
 
     if (!rst_n) begin
 
-        current_state <= IDLE;
-        inter0 <= 0;
-        inter1 <= 0;
-        inter2 <= 0;
-        inter3 <= 0;
-        inter4 <= 0;
+      current_state <= IDLE;
+      inter0 <= 0;
+      inter1 <= 0;
+      inter2 <= 0;
+      inter3 <= 0;
+      inter4 <= 0;
 
-        SCLK_1 <= 0;
-        SCLK_2 <= 0;
-        SCLK_3 <= 0;
-    
-        COPI_1 <= 0;
-        COPI_2 <= 0;
-    
-        nCS_1 <= 0;
-        nCS_2 <= 0;
-        nCS_3 <= 0;
+      SCLK_shift <= 0;
+      nCS_shift <= 0;
+      COPI_shift <= 0;
 
     end else begin
 
-      SCLK_1 <= SCLK;
-      SCLK_2 <= SCLK_1;
-      SCLK_3 <= SCLK_2;
+      SCLK_shift <= {SCLK_shift[1:0], SCLK};
 
-      COPI_1 <= COPI;
-      COPI_2 <= COPI_1;
+      COPI_shift <= {COPI_shift[2], COPI_shift[0], COPI};
 
-      nCS_1 <= nCS;
-      nCS_2 <= nCS_1;
-      nCS_3 <= nCS_2;
+      nCS_shift <= {nCS_shift[1:0], nCS};
 
       if (SCLK_rise) begin // if SCLK has + edge
       
-          COPI_3 <= COPI_2;
+          COPI_shift <= {COPI_shift[1:0], COPI};
           current_state <= next_state;
 
       end
@@ -115,7 +103,7 @@ module spi (
 
       IDLE: begin
 
-        if (!nCS_3) begin
+        if (!nCS_shift[2]) begin
             next_state = WRITE;
         end
         else begin
@@ -128,7 +116,7 @@ module spi (
 
       WRITE: begin
 
-        if (COPI_3) begin
+        if (COPI_shift[2]) begin
           next_state = ADDRESS1;
         end
         else next_state = IDLE; //ignore reads 
@@ -137,9 +125,9 @@ module spi (
 
       ADDRESS1: begin
 
-        if (!nCS_3) begin
+        if (!nCS_shift[2]) begin
             next_state = ADDRESS2;
-            addr[6] = COPI_3;
+            addr[6] = COPI_shift[2];
         end
 
         else next_state = IDLE;
@@ -148,9 +136,9 @@ module spi (
 
       ADDRESS2: begin
 
-        if (!nCS_3) begin
+        if (!nCS_shift[2]) begin
             next_state = ADDRESS3;
-            addr[5] = COPI_3;
+            addr[5] = COPI_shift[2];
         end
 
         else next_state = IDLE;
@@ -159,9 +147,9 @@ module spi (
 
       ADDRESS3: begin
 
-        if (!nCS_3) begin
+        if (!nCS_shift[2]) begin
             next_state = ADDRESS4;
-            addr[4] = COPI_3;
+            addr[4] = COPI_shift[2];
         end
 
         else next_state = IDLE;
@@ -170,9 +158,9 @@ module spi (
 
       ADDRESS4: begin
 
-        if (!nCS_3) begin
+        if (!nCS_shift[2]) begin
             next_state = ADDRESS5;
-            addr[3] = COPI_3;
+            addr[3] = COPI_shift[2];
         end
 
         else next_state = IDLE;
@@ -181,9 +169,9 @@ module spi (
 
       ADDRESS5: begin
 
-        if (!nCS_3) begin
+        if (!nCS_shift[2]) begin
             next_state = ADDRESS6;
-            addr[2] = COPI_3;
+            addr[2] = COPI_shift[2];
         end
 
         else next_state = IDLE;
@@ -192,9 +180,9 @@ module spi (
 
       ADDRESS6: begin
 
-        if (!nCS_3) begin
+        if (!nCS_shift[2]) begin
             next_state = ADDRESS7;
-            addr[1] = COPI_3;
+            addr[1] = COPI_shift[2];
         end
 
         else next_state = IDLE;
@@ -203,8 +191,8 @@ module spi (
 
       ADDRESS7: begin
 
-        if (!nCS_3) begin
-            addr[0] = COPI_3;
+        if (!nCS_shift[2]) begin
+            addr[0] = COPI_shift[2];
             if (addr <= MAX_ADDR) next_state = DATA1;
             else next_state = IDLE;
         end
@@ -215,9 +203,9 @@ module spi (
 
       DATA1: begin
 
-        if (!nCS_3) begin
+        if (!nCS_shift[2]) begin
             next_state = DATA2;
-            data[7] = COPI_3;
+            data[7] = COPI_shift[2];
         end
 
         else next_state = IDLE;
@@ -226,9 +214,9 @@ module spi (
 
       DATA2: begin
 
-        if (!nCS_3) begin
+        if (!nCS_shift[2]) begin
             next_state = DATA3;
-            data[6] = COPI_3;
+            data[6] = COPI_shift[2];
         end
 
         else next_state = IDLE;
@@ -237,9 +225,9 @@ module spi (
 
       DATA3: begin
 
-        if (!nCS_3) begin
+        if (!nCS_shift[2]) begin
             next_state = DATA4;
-            data[5] = COPI_3;
+            data[5] = COPI_shift[2];
         end
 
         else next_state = IDLE;
@@ -248,9 +236,9 @@ module spi (
 
       DATA4: begin
 
-        if (!nCS_3) begin
+        if (!nCS_shift[2]) begin
             next_state = DATA5;
-            data[4] = COPI_3;
+            data[4] = COPI_shift[2];
         end
 
         else next_state = IDLE;
@@ -259,9 +247,9 @@ module spi (
 
       DATA5: begin
 
-        if (!nCS_3) begin
+        if (!nCS_shift[2]) begin
             next_state = DATA6;
-            data[3] = COPI_3;
+            data[3] = COPI_shift[2];
         end
 
         else next_state = IDLE;
@@ -270,9 +258,9 @@ module spi (
 
       DATA6: begin
 
-        if (!nCS_3) begin
+        if (!nCS_shift[2]) begin
             next_state = DATA7;
-            data[2] = COPI_3;
+            data[2] = COPI_shift[2];
         end
 
         else next_state = IDLE;
@@ -281,9 +269,9 @@ module spi (
 
       DATA7: begin
 
-        if (!nCS_3) begin
+        if (!nCS_shift[2]) begin
             next_state = DATA8;
-            data[1] = COPI_3;
+            data[1] = COPI_shift[2];
         end
 
         else next_state = IDLE;
@@ -292,7 +280,7 @@ module spi (
 
       DATA8: begin
 
-        if (!nCS_3) data[0] = COPI_3;
+        if (!nCS_shift[2]) data[0] = COPI_shift[2];
         next_state = WRITE;
 
       end
