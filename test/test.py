@@ -175,24 +175,24 @@ async def test_pwm_freq(dut):
     dut._log.info("All Outputs Enabled with PWM, en_reg_out_7_0 = 0xFF, en_reg_out_15_8 = 0xFF, en_reg_pwm_7_0 = 0xFF, en_reg_pwm_15_8 = 0xFF, pwm_duty_cycle = 0xF0")
 
     ui_in_val = await send_spi_transaction(dut, 1, 0x00, 0x01)
-    await ClockCycles(dut.clk, 100)
-    '''
+    await ClockCycles(dut.clk, 30000)
+    
     ui_in_val = await send_spi_transaction(dut, 1, 0x01, 0xFF)
-    await ClockCycles(dut.clk, 100)
-    '''
+    await ClockCycles(dut.clk, 30000)
+    
     ui_in_val = await send_spi_transaction(dut, 1, 0x02, 0x01)
-    await ClockCycles(dut.clk, 100)
-    '''
+    await ClockCycles(dut.clk, 30000)
+    
     ui_in_val = await send_spi_transaction(dut, 1, 0x03, 0xFF)
-    await ClockCycles(dut.clk, 100)
-    '''
+    await ClockCycles(dut.clk, 30000)
+    
     ui_in_val = await send_spi_transaction(dut, 1, 0x04, 0xF0)
-    await ClockCycles(dut.clk, 100)
-
+    await ClockCycles(dut.clk, 30000)
+    '''
     freq_uo_out_sum = 0
     time1 = 0 
     time2 = 0
-    '''
+    
     await ValueChange(dut.uo_out)
 
     if LogicArray(dut.uo_out.value)[0] == Logic(1):
