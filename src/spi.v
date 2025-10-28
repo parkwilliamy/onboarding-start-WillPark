@@ -282,7 +282,7 @@ module spi (
 
       DATA8: begin
 
-        if (!nCS_3) data[8] = COPI_3;
+        if (!nCS_3) data[0] = COPI_3;
         next_state = WRITE;
 
       end
