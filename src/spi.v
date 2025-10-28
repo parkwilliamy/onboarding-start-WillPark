@@ -80,28 +80,33 @@ module spi (
 
     else if (SCLK_rise) begin // if SCLK has + edge
     
-        COPI_3 <= COPI_2;
         current_state <= next_state;
 
         case (current_state) 
 
-            ADDRESS1: addr[6] <= COPI_3;
-            ADDRESS2: addr[5] <= COPI_3;
-            ADDRESS3: addr[4] <= COPI_3;
-            ADDRESS4: addr[3] <= COPI_3;
-            ADDRESS5: addr[2] <= COPI_3;
-            ADDRESS6: addr[1] <= COPI_3;
-            ADDRESS7: addr[0] <= COPI_3;
-            DATA1: data[7] <= COPI_3;
-            DATA2: data[6] <= COPI_3;
-            DATA3: data[5] <= COPI_3;
-            DATA4: data[4] <= COPI_3;
-            DATA5: data[3] <= COPI_3;
-            DATA6: data[2] <= COPI_3;
-            DATA7: data[1] <= COPI_3;
-            DATA8: data[0] <= COPI_3;
+          ADDRESS1: addr[6] <= COPI_3;
+          ADDRESS2: addr[5] <= COPI_3;
+          ADDRESS3: addr[4] <= COPI_3;
+          ADDRESS4: addr[3] <= COPI_3;
+          ADDRESS5: addr[2] <= COPI_3;
+          ADDRESS6: addr[1] <= COPI_3;
+          ADDRESS7: addr[0] <= COPI_3;
+          DATA1: data[7] <= COPI_3;
+          DATA2: data[6] <= COPI_3;
+          DATA3: data[5] <= COPI_3;
+          DATA4: data[4] <= COPI_3;
+          DATA5: data[3] <= COPI_3;
+          DATA6: data[2] <= COPI_3;
+          DATA7: data[1] <= COPI_3;
+          DATA8: data[0] <= COPI_3;
 
         endcase
+
+    end
+
+    else if (SCLK_fall) begin 
+
+      COPI_3 <= COPI_2;
 
     end
 

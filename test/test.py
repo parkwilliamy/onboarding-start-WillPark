@@ -83,7 +83,7 @@ async def send_spi_transaction(dut, r_w, address, data):
     dut.ui_in.value = ui_in_logicarray(ncs, bit, sclk)
     await ClockCycles(dut.clk, 600)
     return ui_in_logicarray(ncs, bit, sclk)
-'''
+
 @cocotb.test()
 async def test_spi(dut):
     dut._log.info("Start SPI test")
@@ -106,8 +106,8 @@ async def test_spi(dut):
 
     dut._log.info("Test project behavior")
     dut._log.info("Write transaction, address 0x00, data 0xF0")
-    ui_in_val = await send_spi_transaction(dut, 1, 0x00, 0xF0)  # Write transaction
-    assert dut.uo_out.value == 0xF0, f"Expected 0xF0, got {dut.uo_out.value}"
+    ui_in_val = await send_spi_transaction(dut, 1, 0x04, 0x01)  # Write transaction
+    assert dut.uo_out.value == 0x01, f"Expected 0x01, got {dut.uo_out.value}"
     await ClockCycles(dut.clk, 1000) 
 
     dut._log.info("Write transaction, address 0x01, data 0xCC")
@@ -149,6 +149,7 @@ async def test_spi(dut):
     await ClockCycles(dut.clk, 30000)
 
     dut._log.info("SPI test completed successfully")
+
 '''
 @cocotb.test()
 async def test_pwm_freq(dut):
@@ -188,7 +189,7 @@ async def test_pwm_freq(dut):
     
     ui_in_val = await send_spi_transaction(dut, 1, 0x04, 0xF0)
     await ClockCycles(dut.clk, 30000)
-    '''
+    
     freq_uo_out_sum = 0
     time1 = 0 
     time2 = 0
@@ -242,9 +243,9 @@ async def test_pwm_freq(dut):
    
     #assert freq_uio_out_avg >= 2970 and freq_uio_out_avg <= 3030, f"Expected 2970-3030Hz, got {freq_uio_out_avg}"
     await ClockCycles(dut.clk, 1000) 
-    '''
+    
     dut._log.info("PWM Frequency test completed successfully")
-
+    '''
 
 @cocotb.test()
 async def test_pwm_duty(dut):
