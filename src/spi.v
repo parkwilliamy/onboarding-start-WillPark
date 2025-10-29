@@ -227,107 +227,116 @@ module spi (
 
   end
 
-  always @ (*) begin
+  always @ (posedge clk or negedge rst_n) begin
 
-    case (current_state) 
+    if (!rst_n) begin
+      addr <= 0;
+      data <= 0;
+    end
 
-      ADDRESS1: begin
+    else begin
 
-        if (!nCS_shift[2]) addr[6] = COPI_shift[2];
+      case (current_state) 
 
-      end
+        ADDRESS1: begin
 
-      ADDRESS2: begin
+          if (!nCS_shift[2]) addr[6] <= COPI_shift[2];
 
-        if (!nCS_shift[2]) addr[5] = COPI_shift[2];
-        
-      end
+        end
 
-      ADDRESS3: begin
+        ADDRESS2: begin
 
-        if (!nCS_shift[2]) addr[4] = COPI_shift[2];
-       
-
-      end
-
-      ADDRESS4: begin
-
-        if (!nCS_shift[2]) addr[3] = COPI_shift[2];
-        
-
-      end
-
-      ADDRESS5: begin
-
-        if (!nCS_shift[2]) addr[2] = COPI_shift[2];
-        
-
-      end
-
-      ADDRESS6: begin
-
-        if (!nCS_shift[2]) addr[1] = COPI_shift[2];
-
-
-      end
-
-      ADDRESS7: begin
-
-        if (!nCS_shift[2]) addr[0] = COPI_shift[2];
+          if (!nCS_shift[2]) addr[5] <= COPI_shift[2];
           
-      end
+        end
 
-      DATA1: begin
+        ADDRESS3: begin
 
-        if (!nCS_shift[2]) data[7] = COPI_shift[2];
-
-      end
-
-      DATA2: begin
-
-        if (!nCS_shift[2]) data[6] = COPI_shift[2];
-
-      end
-
-      DATA3: begin
-
-        if (!nCS_shift[2]) data[5] = COPI_shift[2];
+          if (!nCS_shift[2]) addr[4] <= COPI_shift[2];
         
-      end
 
-      DATA4: begin
+        end
 
-        if (!nCS_shift[2]) data[4] = COPI_shift[2];
-   
-      end
+        ADDRESS4: begin
 
-      DATA5: begin
+          if (!nCS_shift[2]) addr[3] <= COPI_shift[2];
+          
 
-        if (!nCS_shift[2]) data[3] = COPI_shift[2];
+        end
 
-      end
+        ADDRESS5: begin
 
-      DATA6: begin
+          if (!nCS_shift[2]) addr[2] <= COPI_shift[2];
+          
 
-        if (!nCS_shift[2]) data[2] = COPI_shift[2];
+        end
 
-      end
+        ADDRESS6: begin
 
-      DATA7: begin
+          if (!nCS_shift[2]) addr[1] <= COPI_shift[2];
 
-        if (!nCS_shift[2]) data[1] = COPI_shift[2];
-      
-      end
 
-      DATA8: begin
+        end
 
-        if (!nCS_shift[2]) data[0] = COPI_shift[2];
+        ADDRESS7: begin
+
+          if (!nCS_shift[2]) addr[0] <= COPI_shift[2];
+            
+        end
+
+        DATA1: begin
+
+          if (!nCS_shift[2]) data[7] <= COPI_shift[2];
+
+        end
+
+        DATA2: begin
+
+          if (!nCS_shift[2]) data[6] <= COPI_shift[2];
+
+        end
+
+        DATA3: begin
+
+          if (!nCS_shift[2]) data[5] <= COPI_shift[2];
+          
+        end
+
+        DATA4: begin
+
+          if (!nCS_shift[2]) data[4] <= COPI_shift[2];
+    
+        end
+
+        DATA5: begin
+
+          if (!nCS_shift[2]) data[3] <= COPI_shift[2];
+
+        end
+
+        DATA6: begin
+
+          if (!nCS_shift[2]) data[2] <= COPI_shift[2];
+
+        end
+
+        DATA7: begin
+
+          if (!nCS_shift[2]) data[1] <= COPI_shift[2];
         
-      end
+        end
 
-  
+        DATA8: begin
 
-    endcase
+          if (!nCS_shift[2]) data[0] <= COPI_shift[2];
+          
+        end
+
+    
+
+      endcase
+
+    end
 
   end
 
