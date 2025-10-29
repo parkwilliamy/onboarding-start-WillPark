@@ -103,88 +103,56 @@ module spi (
 
       IDLE: begin
 
-        if (!nCS_shift[2]) begin
-            next_state = WRITE;
-        end
-        else begin
-            addr = 0;
-            data = 0;
-            next_state = IDLE;
-        end
-
+        if (!nCS_shift[2]) next_state = WRITE;
+        else next_state = IDLE;
+        
       end
 
       WRITE: begin
 
-        if (COPI_shift[2]) begin
-          next_state = ADDRESS1;
-        end
+        if (!nCS_shift[2] && COPI_shift[2]) next_state = ADDRESS1;
         else next_state = IDLE; //ignore reads 
 
       end
 
       ADDRESS1: begin
 
-        if (!nCS_shift[2]) begin
-            next_state = ADDRESS2;
-            addr[6] = COPI_shift[2];
-        end
-
+        if (!nCS_shift[2]) next_state = ADDRESS2;
         else next_state = IDLE;
 
       end
 
       ADDRESS2: begin
 
-        if (!nCS_shift[2]) begin
-            next_state = ADDRESS3;
-            addr[5] = COPI_shift[2];
-        end
-
+        if (!nCS_shift[2]) next_state = ADDRESS3;
         else next_state = IDLE;
 
       end
 
       ADDRESS3: begin
 
-        if (!nCS_shift[2]) begin
-            next_state = ADDRESS4;
-            addr[4] = COPI_shift[2];
-        end
-
+        if (!nCS_shift[2]) next_state = ADDRESS4;
         else next_state = IDLE;
 
       end
 
       ADDRESS4: begin
 
-        if (!nCS_shift[2]) begin
-            next_state = ADDRESS5;
-            addr[3] = COPI_shift[2];
-        end
-
+        if (!nCS_shift[2]) next_state = ADDRESS5;
         else next_state = IDLE;
 
       end
 
       ADDRESS5: begin
 
-        if (!nCS_shift[2]) begin
-            next_state = ADDRESS6;
-            addr[2] = COPI_shift[2];
-        end
-
+        if (!nCS_shift[2]) next_state = ADDRESS6;
         else next_state = IDLE;
 
       end
 
       ADDRESS6: begin
 
-        if (!nCS_shift[2]) begin
-            next_state = ADDRESS7;
-            addr[1] = COPI_shift[2];
-        end
-
+        if (!nCS_shift[2]) next_state = ADDRESS7;
         else next_state = IDLE;
 
       end
@@ -192,7 +160,6 @@ module spi (
       ADDRESS7: begin
 
         if (!nCS_shift[2]) begin
-            addr[0] = COPI_shift[2];
             if (addr <= MAX_ADDR) next_state = DATA1;
             else next_state = IDLE;
         end
@@ -203,86 +170,159 @@ module spi (
 
       DATA1: begin
 
-        if (!nCS_shift[2]) begin
-            next_state = DATA2;
-            data[7] = COPI_shift[2];
-        end
-
+        if (!nCS_shift[2]) next_state = DATA2;
         else next_state = IDLE;
 
       end
 
       DATA2: begin
 
-        if (!nCS_shift[2]) begin
-            next_state = DATA3;
-            data[6] = COPI_shift[2];
-        end
-
+        if (!nCS_shift[2]) next_state = DATA3;
         else next_state = IDLE;
 
       end
 
       DATA3: begin
 
-        if (!nCS_shift[2]) begin
-            next_state = DATA4;
-            data[5] = COPI_shift[2];
-        end
-
+        if (!nCS_shift[2]) next_state = DATA4;
         else next_state = IDLE;
 
       end
 
       DATA4: begin
 
-        if (!nCS_shift[2]) begin
-            next_state = DATA5;
-            data[4] = COPI_shift[2];
-        end
-
+        if (!nCS_shift[2]) next_state = DATA5;
         else next_state = IDLE;
 
       end
 
       DATA5: begin
 
-        if (!nCS_shift[2]) begin
-            next_state = DATA6;
-            data[3] = COPI_shift[2];
-        end
-
+        if (!nCS_shift[2]) next_state = DATA6;
         else next_state = IDLE;
 
       end
 
       DATA6: begin
 
-        if (!nCS_shift[2]) begin
-            next_state = DATA7;
-            data[2] = COPI_shift[2];
-        end
-
+        if (!nCS_shift[2]) next_state = DATA7;
         else next_state = IDLE;
 
       end
 
       DATA7: begin
 
-        if (!nCS_shift[2]) begin
-            next_state = DATA8;
-            data[1] = COPI_shift[2];
-        end
-
+        if (!nCS_shift[2]) next_state = DATA8;
         else next_state = IDLE;
 
       end
 
       DATA8: begin
 
-        if (!nCS_shift[2]) data[0] = COPI_shift[2];
         next_state = WRITE;
 
+      end
+
+    endcase
+
+  end
+
+  always @ (*) begin
+
+    case (current_state) 
+
+      ADDRESS1: begin
+
+        if (!nCS_shift[2]) addr[6] = COPI_shift[2];
+
+      end
+
+      ADDRESS2: begin
+
+        if (!nCS_shift[2]) addr[5] = COPI_shift[2];
+        
+      end
+
+      ADDRESS3: begin
+
+        if (!nCS_shift[2]) addr[4] = COPI_shift[2];
+       
+
+      end
+
+      ADDRESS4: begin
+
+        if (!nCS_shift[2]) addr[3] = COPI_shift[2];
+        
+
+      end
+
+      ADDRESS5: begin
+
+        if (!nCS_shift[2]) addr[2] = COPI_shift[2];
+        
+
+      end
+
+      ADDRESS6: begin
+
+        if (!nCS_shift[2]) addr[1] = COPI_shift[2];
+
+
+      end
+
+      ADDRESS7: begin
+
+        if (!nCS_shift[2]) addr[0] = COPI_shift[2];
+          
+      end
+
+      DATA1: begin
+
+        if (!nCS_shift[2]) data[7] = COPI_shift[2];
+
+      end
+
+      DATA2: begin
+
+        if (!nCS_shift[2]) data[6] = COPI_shift[2];
+
+      end
+
+      DATA3: begin
+
+        if (!nCS_shift[2]) data[5] = COPI_shift[2];
+        
+      end
+
+      DATA4: begin
+
+        if (!nCS_shift[2]) data[4] = COPI_shift[2];
+   
+      end
+
+      DATA5: begin
+
+        if (!nCS_shift[2]) data[3] = COPI_shift[2];
+
+      end
+
+      DATA6: begin
+
+        if (!nCS_shift[2]) data[2] = COPI_shift[2];
+
+      end
+
+      DATA7: begin
+
+        if (!nCS_shift[2]) data[1] = COPI_shift[2];
+      
+      end
+
+      DATA8: begin
+
+        if (!nCS_shift[2]) data[0] = COPI_shift[2];
+        
       end
 
   

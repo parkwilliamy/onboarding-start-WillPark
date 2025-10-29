@@ -5,7 +5,7 @@ import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import RisingEdge
 from cocotb.triggers import ClockCycles
-#from cocotb.triggers import ValueChange
+#from cocotb.triggers import Timer, First
 from cocotb.types import Logic
 from cocotb.types import LogicArray
 
@@ -83,6 +83,151 @@ async def send_spi_transaction(dut, r_w, address, data):
     dut.ui_in.value = ui_in_logicarray(ncs, bit, sclk)
     await ClockCycles(dut.clk, 600)
     return ui_in_logicarray(ncs, bit, sclk)
+'''
+async def average_frequency(dut):
+
+    freq_sum = 0
+    freq_avg_list = [0,0]
+    cycles = 0
+    time1 = 0
+    time2 = 0
+    pwm_count = 8
+    
+    for i in range(8):
+        while (cycles < 16700):
+        
+            await RisingEdge(dut.clk)
+            pwm_val_1 = dut.uo_out.value[i]
+            await RisingEdge(dut.clk)
+            pwm_val_2 = dut.uo_out.value[i]
+
+            pwm_rise = (pwm_val_1 == 1) and (pwm_val_2 == 0)
+            if (pwm_rise == 1):
+                time1 = cocotb.utils.get_sim_time(units="sec")
+                break
+            else:
+                cycles += 1
+
+        cycles = 0
+
+        while (cycles < 16700):
+            await RisingEdge(dut.clk)
+            pwm_val_1 = dut.uo_out.value[i]
+            await RisingEdge(dut.clk)
+            pwm_val_2 = dut.uo_out.value[i]
+
+            pwm_rise = (pwm_val_1 == 1) and (pwm_val_2 == 0)
+            if (pwm_rise == 1):
+                time2 = cocotb.utils.get_sim_time(units="sec")
+                break
+            else:
+                cycles += 1
+
+        if time2-time1 != 0:
+            freq = 1/(time2-time1)
+        else:
+            freq = 0
+            pwm_count -= 1
+
+        freq_sum += freq
+        
+
+    if pwm_count != 0:
+        freq_avg_list[0] = freq_sum/pwm_count
+    else:
+        freq_avg_list[0] = 0
+
+    freq_sum = 0
+    pwm_count = 8
+
+    for i in range(8):
+        while (cycles < 16700):
+        
+            await RisingEdge(dut.clk)
+            pwm_val_1 = dut.uio_out.value[i]
+            await RisingEdge(dut.clk)
+            pwm_val_2 = dut.uio_out.value[i]
+
+            pwm_rise = (pwm_val_1 == 1) and (pwm_val_2 == 0)
+            if (pwm_rise == 1):
+                time1 = cocotb.utils.get_sim_time(units="sec")
+                break
+            else:
+                cycles += 1
+
+        cycles = 0
+
+        while (cycles < 16700):
+            await RisingEdge(dut.clk)
+            pwm_val_1 = dut.uio_out.value[i]
+            await RisingEdge(dut.clk)
+            pwm_val_2 = dut.uio_out.value[i]
+
+            pwm_rise = (pwm_val_1 == 1) and (pwm_val_2 == 0)
+            if (pwm_rise == 1):
+                time2 = cocotb.utils.get_sim_time(units="sec")
+                break
+            else:
+                cycles += 1
+
+        if time2-time1 != 0:
+            freq = 1/(time2-time1)
+        else:
+            freq = 0
+            pwm_count -= 1
+
+        freq_sum += freq
+        
+
+    if pwm_count != 0:
+        freq_avg_list[1] = freq_sum/pwm_count
+    else:
+        freq_avg_list[1] = 0
+    
+    return freq_avg_list
+    
+async def get_duty_cycle(dut):
+
+    for i in range(8):
+        while (cycles < 16700):
+        
+            await RisingEdge(dut.clk)
+            pwm_val_1 = dut.uo_out.value[i]
+            await RisingEdge(dut.clk)
+            pwm_val_2 = dut.uo_out.value[i]
+
+            pwm_rise = (pwm_val_1 == 1) and (pwm_val_2 == 0)
+            if (pwm_rise == 1):
+                time1 = cocotb.utils.get_sim_time(units="sec")
+                break
+            else:
+                cycles += 1
+
+        cycles = 0
+
+        while (cycles < 16700):
+            await RisingEdge(dut.clk)
+            pwm_val_1 = dut.uo_out.value[i]
+            await RisingEdge(dut.clk)
+            pwm_val_2 = dut.uo_out.value[i]
+
+            pwm_fall = (pwm_val_1 == 0) and (pwm_val_2 == 1)
+            if (pwm_rise == 1):
+                time2 = cocotb.utils.get_sim_time(units="sec")
+                break
+            else:
+                cycles += 1
+
+        if time2-time1 != 0:
+            freq = 1/(time2-time1)
+        else:
+            freq = 0
+            pwm_count -= 1
+
+        freq_sum += freq
+'''
+
+
 
 @cocotb.test()
 async def test_spi(dut):
@@ -173,59 +318,126 @@ async def test_pwm_freq(dut):
     await ClockCycles(dut.clk, 5)
 
     dut._log.info("Test project behavior")
-    dut._log.info("All Outputs Enabled with PWM, en_reg_out_7_0 = 0xFF, en_reg_out_15_8 = 0xFF, en_reg_pwm_7_0 = 0xFF, en_reg_pwm_15_8 = 0xFF, pwm_duty_cycle = 0xF0")
+    dut._log.info("All Outputs Enabled with PWM")
 
-    ui_in_val = await send_spi_transaction(dut, 1, 0x00, 0x01)
-    await ClockCycles(dut.clk, 30000)
+    ui_in_val = await send_spi_transaction(dut, 1, 0x00, 0xFF)
+    await ClockCycles(dut.clk, 100)
     
-    #ui_in_val = await send_spi_transaction(dut, 1, 0x01, 0xFF)
-    #await ClockCycles(dut.clk, 30000)
+    ui_in_val = await send_spi_transaction(dut, 1, 0x01, 0xFF)
+    await ClockCycles(dut.clk, 100)
     
-    ui_in_val = await send_spi_transaction(dut, 1, 0x02, 0x01)
-    await ClockCycles(dut.clk, 30000)
+    ui_in_val = await send_spi_transaction(dut, 1, 0x02, 0xFF)
+    await ClockCycles(dut.clk, 100)
     
-    #ui_in_val = await send_spi_transaction(dut, 1, 0x03, 0xFF)
-    #await ClockCycles(dut.clk, 30000)
+    ui_in_val = await send_spi_transaction(dut, 1, 0x03, 0xFF)
+    await ClockCycles(dut.clk, 100)
     
     ui_in_val = await send_spi_transaction(dut, 1, 0x04, 0xF0)
-    await ClockCycles(dut.clk, 30000)
+    await ClockCycles(dut.clk, 100)
+
+    freq_avg_list = await average_frequency(dut)
+
+    assert freq_avg_list[0] >= 2970 and freq_avg_list[0] <= 3030, f"Expected 2970 <= freq_uo_avg <= 3030, got {freq_avg_list[0]}"
+    assert freq_avg_list[1] >= 2970 and freq_avg_list[1] <= 3030, f"Expected 2970 <= freq_uo_avg <= 3030, got {freq_avg_list[1]}"
+   
+    await ClockCycles(dut.clk, 1000) 
+
+    dut._log.info("All Outputs Disabled")
+
+    ui_in_val = await send_spi_transaction(dut, 1, 0x00, 0x00)
+    await ClockCycles(dut.clk, 100)
     
-    while (1):
-        await RisingEdge(dut.clk)
-        pwm_val_1 = LogicArray(dut.uo_out)[0]
-        await RisingEdge(dut.clk)
-        pwm_val_2 = pwm_val_1
-        await RisingEdge(dut.clk)
-        pwm_val_3 = pwm_val_2
+    ui_in_val = await send_spi_transaction(dut, 1, 0x01, 0x00)
+    await ClockCycles(dut.clk, 100)
+    
+    ui_in_val = await send_spi_transaction(dut, 1, 0x02, 0x00)
+    await ClockCycles(dut.clk, 100)
+    
+    ui_in_val = await send_spi_transaction(dut, 1, 0x03, 0x00)
+    await ClockCycles(dut.clk, 100)
+    
+    ui_in_val = await send_spi_transaction(dut, 1, 0x04, 0x00)
+    await ClockCycles(dut.clk, 100)
 
-        pwm_rise = (pwm_val_2 == 1) and (pwm_val_3 == 0)
-        if (pwm_rise == 1):
-            time1 = cocotb.utils.get_sim_time(units="sec")
-            break
+    freq_avg_list = await average_frequency(dut)
 
-    while (1):
-        await RisingEdge(dut.clk)
-        pwm_val_1 = LogicArray(dut.uo_out)[0]
-        await RisingEdge(dut.clk)
-        pwm_val_2 = pwm_val_1
-        await RisingEdge(dut.clk)
-        pwm_val_3 = pwm_val_2
-
-        pwm_rise = (pwm_val_2 == 1) and (pwm_val_3 == 0)
-        if (pwm_rise == 1):
-            time2 = cocotb.utils.get_sim_time(units="sec")
-            break
-
-    freq = 1/(time2-time1)
-
-    assert freq >= 2970 and freq <= 3030, f"Expected 2970 <= freq <= 3030, got {freq}"
+    assert freq_avg_list[0] == 0, f"Expected freq_uo_avg = 0, got {freq_avg_list[0]}"
+    assert freq_avg_list[1] == 0, f"Expected freq_uio_avg = 0, got {freq_avg_list[1]}"
    
     await ClockCycles(dut.clk, 1000) 
     
     dut._log.info("PWM Frequency test completed successfully")
     '''
-
+'''
 @cocotb.test()
 async def test_pwm_duty(dut):
     # Write your test here
+    dut._log.info("Start PWM frequency test")
+
+    # Set the clock period to 100 ns (10 MHz)
+    clock = Clock(dut.clk, 100, units="ns")
+    cocotb.start_soon(clock.start())
+
+    # Reset
+    dut._log.info("Reset")
+    dut.ena.value = 1
+    ncs = 1
+    bit = 0
+    sclk = 0
+    dut.ui_in.value = ui_in_logicarray(ncs, bit, sclk)
+    dut.rst_n.value = 0
+    await ClockCycles(dut.clk, 5)
+    dut.rst_n.value = 1
+    await ClockCycles(dut.clk, 5)
+
+    dut._log.info("Test project behavior")
+    dut._log.info("100% Duty Cycle")
+
+    ui_in_val = await send_spi_transaction(dut, 1, 0x00, 0xFF)
+    await ClockCycles(dut.clk, 100)
+    
+    ui_in_val = await send_spi_transaction(dut, 1, 0x01, 0xFF)
+    await ClockCycles(dut.clk, 100)
+    
+    ui_in_val = await send_spi_transaction(dut, 1, 0x02, 0xFF)
+    await ClockCycles(dut.clk, 100)
+    
+    ui_in_val = await send_spi_transaction(dut, 1, 0x03, 0xFF)
+    await ClockCycles(dut.clk, 100)
+    
+    ui_in_val = await send_spi_transaction(dut, 1, 0x04, 0xFF)
+    await ClockCycles(dut.clk, 100)
+
+    freq_avg_list = await average_frequency(dut)
+
+    assert freq_avg_list[0] >= 2970 and freq_avg_list[0] <= 3030, f"Expected 2970 <= freq_uo_avg <= 3030, got {freq_avg_list[0]}"
+    assert freq_avg_list[1] >= 2970 and freq_avg_list[1] <= 3030, f"Expected 2970 <= freq_uo_avg <= 3030, got {freq_avg_list[1]}"
+   
+    await ClockCycles(dut.clk, 1000) 
+
+    dut._log.info("All Outputs Disabled")
+
+    ui_in_val = await send_spi_transaction(dut, 1, 0x00, 0x00)
+    await ClockCycles(dut.clk, 100)
+    
+    ui_in_val = await send_spi_transaction(dut, 1, 0x01, 0x00)
+    await ClockCycles(dut.clk, 100)
+    
+    ui_in_val = await send_spi_transaction(dut, 1, 0x02, 0x00)
+    await ClockCycles(dut.clk, 100)
+    
+    ui_in_val = await send_spi_transaction(dut, 1, 0x03, 0x00)
+    await ClockCycles(dut.clk, 100)
+    
+    ui_in_val = await send_spi_transaction(dut, 1, 0x04, 0x00)
+    await ClockCycles(dut.clk, 100)
+
+    freq_avg_list = await average_frequency(dut)
+
+    assert freq_avg_list[0] == 0, f"Expected freq_uo_avg = 0, got {freq_avg_list[0]}"
+    assert freq_avg_list[1] == 0, f"Expected freq_uio_avg = 0, got {freq_avg_list[1]}"
+   
+    await ClockCycles(dut.clk, 1000) 
+    
     dut._log.info("PWM Duty Cycle test completed successfully")
+   ''' 
