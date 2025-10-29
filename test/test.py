@@ -298,7 +298,7 @@ async def get_duty_cycle(dut):
 
 
 
-'''
+
 @cocotb.test()
 async def test_spi(dut):
     dut._log.info("Start SPI test")
@@ -364,7 +364,6 @@ async def test_spi(dut):
     await ClockCycles(dut.clk, 30000)
 
     dut._log.info("SPI test completed successfully")
-'''
 
 
 @cocotb.test()
@@ -389,7 +388,7 @@ async def test_pwm_freq(dut):
     await ClockCycles(dut.clk, 5)
 
     dut._log.info("Test project behavior")
-    '''
+    
     dut._log.info("All Outputs Enabled with PWM")
 
     ui_in_val = await send_spi_transaction(dut, 1, 0x00, 0xFF)
@@ -437,7 +436,7 @@ async def test_pwm_freq(dut):
     assert freq_avg_list[1] == 0, f"Expected freq_uio_avg = 0, got {freq_avg_list[1]}"
    
     await ClockCycles(dut.clk, 1000) 
-    '''
+    
 
     dut._log.info("Some Outputs Enabled with PWM")
 
@@ -465,7 +464,7 @@ async def test_pwm_freq(dut):
     
     dut._log.info("PWM Frequency test completed successfully")
     
-'''
+
 @cocotb.test()
 async def test_pwm_duty(dut):
     # Write your test here
@@ -561,4 +560,4 @@ async def test_pwm_duty(dut):
     await ClockCycles(dut.clk, 1000) 
     
     dut._log.info("PWM Duty Cycle test completed successfully")
-   '''
+   
