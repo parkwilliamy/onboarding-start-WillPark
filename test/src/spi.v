@@ -5,6 +5,7 @@
 
 `default_nettype none
 
+
 module spi (
     input wire rst_n, SCLK, COPI, nCS,
     output [7:0] data0, data1, data2, data3, data4
